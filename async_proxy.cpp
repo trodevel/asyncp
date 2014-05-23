@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.cpp 562 2014-05-21 17:13:30Z serge $
+// $Id: async_proxy.cpp 569 2014-05-22 16:57:40Z serge $
 
 #include "async_proxy.h"                // self
 
@@ -87,6 +87,15 @@ bool AsyncProxy::has_events() const
 void AsyncProxy::check_queue()
 {
     // private: no MUTEX lock
+
+    if( events_.empty() )
+        return;
+
+    IEventPtr ev = events_.front();
+
+    events_.pop_front();
+
+    ev->invoke();
 }
 
 bool AsyncProxy::add_event( IEventPtr event )
