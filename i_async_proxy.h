@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: i_async_proxy.h 565 2014-05-21 17:21:57Z serge $
+// $Id: i_async_proxy.h 542 2014-05-21 17:21:57Z serge $
 
 #ifndef ASYNCP_I_ASYNC_PROXY_H
 #define ASYNCP_I_ASYNC_PROXY_H

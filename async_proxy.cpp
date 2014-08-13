@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.cpp 569 2014-05-22 16:57:40Z serge $
+// $Id: async_proxy.cpp 916 2014-08-13 17:52:11Z serge $
 
 #include "async_proxy.h"                // self
 
@@ -46,7 +46,7 @@ bool AsyncProxy::init( const Config & cfg )
 {
     SCOPE_LOCK( mutex_ );
 
-    dummy_log( 0, MODULENAME, "init()" );
+    dummy_log_info( MODULENAME, "init()" );
 
     cfg_    = cfg;
 
@@ -55,7 +55,7 @@ bool AsyncProxy::init( const Config & cfg )
 
 void AsyncProxy::thread_func()
 {
-    dummy_log( 0, MODULENAME, "thread_func: started" );
+    dummy_log_info( MODULENAME, "thread_func: started" );
 
     bool should_run    = true;
     while( should_run )
@@ -69,10 +69,12 @@ void AsyncProxy::thread_func()
             }
         }
 
-        THREAD_SLEEP_MS( cfg_.sleep_time_ms );
+        {
+            cond_.wait( mutex_cond_ );
+        }
     }
 
-    dummy_log( 0, MODULENAME, "thread_func: ended" );
+    dummy_log_info( MODULENAME, "thread_func: ended" );
 }
 
 bool AsyncProxy::has_events() const
@@ -98,20 +100,29 @@ void AsyncProxy::check_queue()
     ev->invoke();
 }
 
+void AsyncProxy::wakeup()
+{
+    // PRIVATE:
+
+    cond_.notify_one();     // wake-up the thread
+}
+
 bool AsyncProxy::add_event( IEventPtr event )
 {
     SCOPE_LOCK( mutex_ );
 
     if( std::find( events_.begin(), events_.end(), event ) != events_.end() )
     {
-        dummy_log( 0, MODULENAME, "add_event: event %p already exists", event.get() );
+        dummy_log_error( MODULENAME, "add_event: event %p already exists", event.get() );
 
         return false;
     }
 
     events_.push_back( event );
 
-    dummy_log( 0, MODULENAME, "add_event: added event %p", event.get() );
+    dummy_log_debug( MODULENAME, "add_event: added event %p", event.get() );
+
+    wakeup();
 
     return true;
 }
@@ -124,14 +135,14 @@ bool AsyncProxy::remove_event( IEventPtr event )
 
     if( it == events_.end() )
     {
-        dummy_log( 0, MODULENAME, "remove_event: cannot remove - event %p not found", event.get() );
+        dummy_log_error( MODULENAME, "remove_event: cannot remove - event %p not found", event.get() );
 
         return false;
     }
 
     events_.erase( it );
 
-    dummy_log( 0, MODULENAME, "remove_event: removed event %p", event.get() );
+    dummy_log_debug( MODULENAME, "remove_event: removed event %p", event.get() );
 
     return true;
 }

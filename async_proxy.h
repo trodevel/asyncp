@@ -19,14 +19,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.h 562 2014-05-21 17:13:30Z serge $
+// $Id: async_proxy.h 916 2014-08-13 17:52:11Z serge $
 
 #ifndef ASYNCP_ASYNC_PROXY_H
 #define ASYNCP_ASYNC_PROXY_H
 
 #include <string>                   // std::string
 #include <list>
-#include <boost/thread.hpp>         // boost::mutex
+#include <boost/thread.hpp>             // boost::mutex
+#include <boost/thread/condition.hpp>   // boost::condition
 
 #include "i_async_proxy.h"          // IAsyncProxy, IEvent
 
@@ -57,13 +58,16 @@ private:
 
     bool has_events() const;
     void check_queue();
+    void wakeup();
 
 private:
 
     typedef std::list< IEventPtr > EventList;
 
 private:
-    mutable boost::mutex    mutex_;
+    mutable boost::mutex        mutex_;
+    mutable boost::mutex        mutex_cond_;
+    mutable boost::condition    cond_;
 
     Config                  cfg_;
 
