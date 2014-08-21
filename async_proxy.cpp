@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.cpp 916 2014-08-13 17:52:11Z serge $
+// $Id: async_proxy.cpp 967 2014-08-20 17:41:18Z serge $
 
 #include "async_proxy.h"                // self
 
@@ -34,7 +34,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 NAMESPACE_ASYNCP_START
 
-AsyncProxy::AsyncProxy()
+AsyncProxy::AsyncProxy():
+    should_run_( true )
 {
 }
 
@@ -57,20 +58,22 @@ void AsyncProxy::thread_func()
 {
     dummy_log_info( MODULENAME, "thread_func: started" );
 
-    bool should_run    = true;
-    while( should_run )
+    while( true )
     {
         {
+            cond_.wait( mutex_cond_ );
+        }
+
+        {
             SCOPE_LOCK( mutex_ );
+
+            if( should_run_ == false )
+                break;
 
             if( has_events() )
             {
                 check_queue();
             }
-        }
-
-        {
-            cond_.wait( mutex_cond_ );
         }
     }
 
@@ -143,6 +146,17 @@ bool AsyncProxy::remove_event( IEventPtr event )
     events_.erase( it );
 
     dummy_log_debug( MODULENAME, "remove_event: removed event %p", event.get() );
+
+    return true;
+}
+
+bool AsyncProxy::shutdown()
+{
+    SCOPE_LOCK( mutex_ );
+
+    should_run_ = false;
+
+    wakeup();
 
     return true;
 }

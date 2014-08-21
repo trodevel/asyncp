@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.h 916 2014-08-13 17:52:11Z serge $
+// $Id: async_proxy.h 967 2014-08-20 17:41:18Z serge $
 
 #ifndef ASYNCP_ASYNC_PROXY_H
 #define ASYNCP_ASYNC_PROXY_H
@@ -29,13 +29,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <boost/thread.hpp>             // boost::mutex
 #include <boost/thread/condition.hpp>   // boost::condition
 
-#include "i_async_proxy.h"          // IAsyncProxy, IEvent
+#include "i_async_proxy.h"              // IAsyncProxy, IEvent
+#include "../threcon/i_controllable.h"  // IControllable
 
 #include "namespace_asyncp.h"       // NAMESPACE_ASYNCP_START
 
 NAMESPACE_ASYNCP_START
 
-class AsyncProxy: public virtual IAsyncProxy
+class AsyncProxy: public virtual IAsyncProxy, public virtual threcon::IControllable
 {
 public:
     struct Config
@@ -54,6 +55,9 @@ public:
     virtual bool add_event( IEventPtr event );
     virtual bool remove_event( IEventPtr event );
 
+    // interface threcon::IControllable
+    virtual bool shutdown();
+
 private:
 
     bool has_events() const;
@@ -69,6 +73,7 @@ private:
     mutable boost::mutex        mutex_cond_;
     mutable boost::condition    cond_;
 
+    bool                    should_run_;
     Config                  cfg_;
 
     EventList               events_;
