@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.cpp 967 2014-08-20 17:41:18Z serge $
+// $Id: async_proxy.cpp 1180 2014-10-22 17:58:06Z serge $
 
 #include "async_proxy.h"                // self
 
@@ -47,7 +47,7 @@ bool AsyncProxy::init( const Config & cfg )
 {
     SCOPE_LOCK( mutex_ );
 
-    dummy_log_info( MODULENAME, "init()" );
+    dummy_log_info( MODULENAME, "init() - %s", cfg.name.c_str() );
 
     cfg_    = cfg;
 

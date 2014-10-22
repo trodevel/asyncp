@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Id: async_proxy.h 967 2014-08-20 17:41:18Z serge $
+// $Id: async_proxy.h 1180 2014-10-22 17:58:06Z serge $
 
 #ifndef ASYNCP_ASYNC_PROXY_H
 #define ASYNCP_ASYNC_PROXY_H
@@ -41,7 +41,8 @@ class AsyncProxy: public virtual IAsyncProxy, public virtual threcon::IControlla
 public:
     struct Config
     {
-        uint32  sleep_time_ms;  // try 1 ms
+        uint32      sleep_time_ms;  // try 1 ms
+        std::string name;
     };
 
 public:
