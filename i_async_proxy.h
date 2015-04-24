@@ -19,12 +19,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1726 $ $Date:: 2015-04-24 #$ $Author: serge $
 
 #ifndef ASYNCP_I_ASYNC_PROXY_H
 #define ASYNCP_I_ASYNC_PROXY_H
 
-#include <boost/shared_ptr.hpp>     // shared_pt
+#include <memory>                   // std::shared_ptr
 
 #include "../utils/types.h"         // uint32
 
@@ -40,7 +40,7 @@ public:
     virtual void invoke()   = 0;
 };
 
-typedef boost::shared_ptr< IEvent > IEventPtr;
+typedef std::shared_ptr< IEvent > IEventPtr;
 
 class IAsyncProxy
 {

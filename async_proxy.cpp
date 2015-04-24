@@ -19,15 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1404 $ $Date:: 2015-01-16 #$ $Author: serge $
+// $Revision: 1726 $ $Date:: 2015-04-24 #$ $Author: serge $
 
 #include "async_proxy.h"                // self
 
 #include <algorithm>                    // std::find
-#include <boost/bind.hpp>               // boost::bind
 
 #include "../utils/assert.h"            // ASSERT
-#include "../utils/wrap_mutex.h"        // SCOPE_LOCK
+#include "../utils/mutex_helper.h"      // MUTEX_SCOPE_LOCK
 #include "../utils/dummy_logger.h"      // dummy_log
 
 #define MODULENAME      "AsyncProxy"
@@ -45,7 +44,7 @@ AsyncProxy::~AsyncProxy()
 
 bool AsyncProxy::init( const Config & cfg )
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     dummy_log_info( MODULENAME, "init() - %s", cfg.name.c_str() );
 
@@ -61,11 +60,12 @@ void AsyncProxy::thread_func()
     while( true )
     {
         {
-            cond_.wait( mutex_cond_ );
+            std::unique_lock<std::mutex> lock( mutex_cond_ );
+            cond_.wait( lock );
         }
 
         {
-            SCOPE_LOCK( mutex_ );
+            MUTEX_SCOPE_LOCK( mutex_ );
 
             if( should_run_ == false )
                 break;
@@ -112,7 +112,7 @@ void AsyncProxy::wakeup()
 
 bool AsyncProxy::add_event( IEventPtr event )
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     if( std::find( events_.begin(), events_.end(), event ) != events_.end() )
     {
@@ -132,7 +132,7 @@ bool AsyncProxy::add_event( IEventPtr event )
 
 bool AsyncProxy::remove_event( IEventPtr event )
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     EventList::iterator it = std::find( events_.begin(), events_.end(), event );
 
@@ -152,7 +152,7 @@ bool AsyncProxy::remove_event( IEventPtr event )
 
 bool AsyncProxy::shutdown()
 {
-    SCOPE_LOCK( mutex_ );
+    MUTEX_SCOPE_LOCK( mutex_ );
 
     should_run_ = false;
 
