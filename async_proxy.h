@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1726 $ $Date:: 2015-04-24 #$ $Author: serge $
+// $Revision: 3420 $ $Date:: 2016-02-16 #$ $Author: serge $
 
 #ifndef ASYNCP_ASYNC_PROXY_H
 #define ASYNCP_ASYNC_PROXY_H
@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <list>
 #include <mutex>                    // std::mutex
 #include <condition_variable>       // std::condition_variable
+#include <cstdint>                  // uint32_t
 
 #include "i_async_proxy.h"              // IAsyncProxy, IEvent
 #include "../threcon/i_controllable.h"  // IControllable
@@ -41,7 +42,7 @@ class AsyncProxy: public virtual IAsyncProxy, public virtual threcon::IControlla
 public:
     struct Config
     {
-        uint32      sleep_time_ms;  // try 1 ms
+        uint32_t    sleep_time_ms;  // try 1 ms
         std::string name;
     };
 

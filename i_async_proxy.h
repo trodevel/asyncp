@@ -19,14 +19,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1726 $ $Date:: 2015-04-24 #$ $Author: serge $
+// $Revision: 3420 $ $Date:: 2016-02-16 #$ $Author: serge $
 
 #ifndef ASYNCP_I_ASYNC_PROXY_H
 #define ASYNCP_I_ASYNC_PROXY_H
 
 #include <memory>                   // std::shared_ptr
-
-#include "../utils/types.h"         // uint32
 
 #include "namespace_asyncp.h"       // NAMESPACE_ASYNCP_START
 
