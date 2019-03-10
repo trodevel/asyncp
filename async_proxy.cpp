@@ -19,13 +19,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 1726 $ $Date:: 2015-04-24 #$ $Author: serge $
+// $Revision: 10614 $ $Date:: 2019-03-10 #$ $Author: serge $
 
 #include "async_proxy.h"                // self
 
 #include <algorithm>                    // std::find
 
-#include "../utils/assert.h"            // ASSERT
+#include "../utils/utils_assert.h"            // ASSERT
 #include "../utils/mutex_helper.h"      // MUTEX_SCOPE_LOCK
 #include "../utils/dummy_logger.h"      // dummy_log
 
